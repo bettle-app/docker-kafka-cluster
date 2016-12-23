@@ -1,4 +1,7 @@
-#!/bin/sh
+#!/bin/bash
+
+export BROKERS=$("$KAFKA_HOME"/bin/zookeeper-shell.sh "$ZOOKEEPER_CONNECT" <<< "ls /brokers/ids" | tail -1)  
+export BROKER_COUNT=$((${#BROKERS}+1))
 
 if [ ! -z "$KAFKA_HOST" ]; then
     echo "advertised host: $KAFKA_HOST"
@@ -10,9 +13,9 @@ if [ ! -z "$KAFKA_PORT" ]; then
 fi
 
 # Set the broker id
-if [ ! -z "$KAFKA_ID" ]; then
-    echo "broker id: $KAFKA_ID"
-    sed -r -i "s/(broker.id)=(.*)/\1=$KAFKA_ID/g" $KAFKA_HOME/config/server.properties
+if [ ! -z "$BROKER_ID" ]; then
+    echo "broker id: $BROKER_COUNT"
+    sed -r -i "s/(broker.id)=(.*)/\1=$BROKER_COUNT/g" $KAFKA_HOME/config/server.properties
 fi
 
 # Set the zookeeper connect from the environment variable 
