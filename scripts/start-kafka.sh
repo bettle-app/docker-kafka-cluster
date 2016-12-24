@@ -3,6 +3,10 @@
 export BROKERS=$("$KAFKA_HOME"/bin/zookeeper-shell.sh "$ZOOKEEPER_CONNECT" <<< "ls /brokers/ids" | tail -1)  
 export BROKER_COUNT=$((${#BROKERS}+1))
 
+if [ -z "$KAFKA_HOST" ]; then
+    export KAFKA_HOST=$(curl -s 169.254.169.254/latest/meta-data/local-ipv4)
+fi
+
 if [ ! -z "$KAFKA_HOST" ]; then
     echo "advertised host: $KAFKA_HOST"
     sed -r -i "s/#(advertised.host.name)=(.*)/\1=$KAFKA_HOST/g" $KAFKA_HOME/config/server.properties
